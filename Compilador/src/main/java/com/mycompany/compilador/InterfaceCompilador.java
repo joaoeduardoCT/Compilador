@@ -4,17 +4,105 @@
  */
 package com.mycompany.compilador;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+import javax.swing.SpringLayout;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author joaoe
  */
-public class InterfaceCompilador extends javax.swing.JFrame {
-
-    /**
-     * Creates new form InterfaceCompilador
-     */
-    public InterfaceCompilador() {
+public class InterfaceCompilador extends javax.swing.JFrame {// Área de texto para os números das linhas
+        public InterfaceCompilador() {
         initComponents();
+        setMinimumSize(new Dimension(910, 600));
+        setLayout(new BorderLayout());
+        
+        // Barra de Ferramentas no topo
+           add(jPanel1, BorderLayout.NORTH);
+        
+        jPanel1.setPreferredSize(new Dimension(getWidth(), 70)); // Largura da janela, altura fixa
+        
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jScrollPane1, jScrollPane2);
+        splitPane.setResizeWeight(0.5); // Inicialmente divide a janela ao meio
+        add(splitPane, BorderLayout.CENTER);
+        
+        // Barra de Ferramentas no topo
+        add(jPanel1, BorderLayout.NORTH);
+
+        // SplitPane (Editor acima, Mensagens abaixo) no centro
+        add(splitPane, BorderLayout.CENTER);
+
+        // Barra de Status no final
+        add(Status, BorderLayout.SOUTH);
+        
+       addComponentListener(new ComponentAdapter() {
+    @Override
+    public void componentResized(ComponentEvent e) {
+        jPanel1.setPreferredSize(new Dimension(getWidth(), 70));
+        Status.setPreferredSize(new Dimension(getWidth(), 25));
+        splitPane.setDividerLocation(getHeight() / 2 - 70); // Ajuste da posição inicial da barra de divisão
+    }
+});      
+       
+       SpringLayout layout = new SpringLayout();
+       jPanel1.setLayout(layout);
+       
+        // Configurar as restrições de layout para os botões
+        layout.putConstraint(SpringLayout.WEST, NovoButton, 10, SpringLayout.WEST, jPanel1);
+        layout.putConstraint(SpringLayout.NORTH, NovoButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, AbrirButton, 10, SpringLayout.EAST, NovoButton);
+        layout.putConstraint(SpringLayout.NORTH, AbrirButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, SalvarButton, 10, SpringLayout.EAST, AbrirButton);
+        layout.putConstraint(SpringLayout.NORTH, SalvarButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, CopiarButton, 15, SpringLayout.EAST, SalvarButton);
+        layout.putConstraint(SpringLayout.NORTH, CopiarButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, ColarButton, 10, SpringLayout.EAST, CopiarButton);
+        layout.putConstraint(SpringLayout.NORTH, ColarButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, RecotarButton, 10, SpringLayout.EAST, ColarButton);
+        layout.putConstraint(SpringLayout.NORTH, RecotarButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, CompilarButton, 15, SpringLayout.EAST, RecotarButton);
+        layout.putConstraint(SpringLayout.NORTH, CompilarButton, 10, SpringLayout.NORTH, jPanel1);
+
+        layout.putConstraint(SpringLayout.WEST, EquipeButton, 15, SpringLayout.EAST, CompilarButton);
+        layout.putConstraint(SpringLayout.EAST, EquipeButton, -10, SpringLayout.EAST, jPanel1);
+        layout.putConstraint(SpringLayout.NORTH, EquipeButton, 10, SpringLayout.NORTH, jPanel1);
+       
+        // Editor e Mensagens de acordo com o tamanho da página
+        Editor.setLineWrap(true);
+        Editor.setWrapStyleWord(true);
+
+        Mensagens.setLineWrap(true);
+        Mensagens.setWrapStyleWord(true);
+        
     }
 
     /**
@@ -35,13 +123,14 @@ public class InterfaceCompilador extends javax.swing.JFrame {
         RecotarButton = new javax.swing.JButton();
         CompilarButton = new javax.swing.JButton();
         EquipeButton = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        Editor = new java.awt.TextArea();
-        Mensagens = new java.awt.TextArea();
         Status = new java.awt.TextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Editor = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Mensagens = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(900, 70));
+        setMinimumSize(new java.awt.Dimension(910, 600));
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -49,30 +138,115 @@ public class InterfaceCompilador extends javax.swing.JFrame {
         jPanel1.setToolTipText("");
         jPanel1.setMinimumSize(new java.awt.Dimension(900, 70));
 
+        NovoButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\add-file(2).png")); // NOI18N
         NovoButton.setText("Novo [ctrl-n]");
-        NovoButton.setMaximumSize(new java.awt.Dimension(113, 23));
-        NovoButton.setMinimumSize(new java.awt.Dimension(113, 23));
-        NovoButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        NovoButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        NovoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        NovoButton.setIconTextGap(0);
+        NovoButton.setMaximumSize(new java.awt.Dimension(222, 23));
+        NovoButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        NovoButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        NovoButton.setVerifyInputWhenFocusTarget(false);
+        NovoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        NovoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NovoButtonActionPerformed(evt);
+            }
+        });
+        NovoButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                NovoButtonKeyTyped(evt);
+            }
+        });
 
+        AbrirButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\folder.png")); // NOI18N
         AbrirButton.setText("Abrir [ctrl-o]");
-        AbrirButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        AbrirButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        AbrirButton.setMaximumSize(new java.awt.Dimension(196, 59));
+        AbrirButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        AbrirButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        AbrirButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        AbrirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AbrirButtonActionPerformed(evt);
+            }
+        });
 
+        SalvarButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\folder(1).png")); // NOI18N
         SalvarButton.setText("Salvar [ctrl-s]");
-        SalvarButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        SalvarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        SalvarButton.setMaximumSize(new java.awt.Dimension(120, 59));
+        SalvarButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        SalvarButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        SalvarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        SalvarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalvarButtonActionPerformed(evt);
+            }
+        });
 
+        CopiarButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\file.png")); // NOI18N
         CopiarButton.setText("Copiar [ctrl-c]");
-        CopiarButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        CopiarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        CopiarButton.setMaximumSize(new java.awt.Dimension(154, 59));
+        CopiarButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        CopiarButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        CopiarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        CopiarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CopiarButtonActionPerformed(evt);
+            }
+        });
 
+        ColarButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\edit.png")); // NOI18N
         ColarButton.setText("Colar [ctrl-v]");
-        ColarButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        ColarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ColarButton.setMaximumSize(new java.awt.Dimension(196, 59));
+        ColarButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        ColarButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        ColarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        ColarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ColarButtonActionPerformed(evt);
+            }
+        });
 
+        RecotarButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\add-file(2).png")); // NOI18N
         RecotarButton.setText("Recortar [ctrl-x]");
+        RecotarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        RecotarButton.setMaximumSize(new java.awt.Dimension(213, 59));
+        RecotarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        RecotarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RecotarButtonActionPerformed(evt);
+            }
+        });
 
+        CompilarButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\play.png")); // NOI18N
         CompilarButton.setText("Compilar [F7]");
-        CompilarButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        CompilarButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        CompilarButton.setMaximumSize(new java.awt.Dimension(152, 59));
+        CompilarButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        CompilarButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        CompilarButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        CompilarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CompilarButtonActionPerformed(evt);
+            }
+        });
 
+        EquipeButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\joaoe\\Downloads\\customers.png")); // NOI18N
         EquipeButton.setText("Equipe [F1}");
-        EquipeButton.setPreferredSize(new java.awt.Dimension(113, 23));
+        EquipeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        EquipeButton.setMaximumSize(new java.awt.Dimension(190, 59));
+        EquipeButton.setMinimumSize(new java.awt.Dimension(113, 59));
+        EquipeButton.setPreferredSize(new java.awt.Dimension(113, 59));
+        EquipeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        EquipeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EquipeButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -90,73 +264,175 @@ public class InterfaceCompilador extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ColarButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(RecotarButton)
+                .addComponent(RecotarButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(248, 248, 248)
                 .addComponent(CompilarButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(EquipeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(54, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(NovoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(AbrirButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(SalvarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CopiarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ColarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(RecotarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CompilarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(EquipeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(AbrirButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(SalvarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CopiarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ColarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(RecotarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CompilarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(EquipeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(51, 51, 51))
         );
 
-        Mensagens.setEditable(false);
-
         Status.setEditable(false);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        Editor.setColumns(20);
+        Editor.setRows(5);
+        Editor.setBorder(new NumberedBorder());
+        Editor.setName(""); // NOI18N
+        jScrollPane1.setViewportView(Editor);
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        Mensagens.setEditable(false);
+        Mensagens.setColumns(20);
+        Mensagens.setRows(5);
+        Mensagens.setMinimumSize(new java.awt.Dimension(90, 25));
+        jScrollPane2.setViewportView(Mensagens);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSeparator1)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Editor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(Status, javax.swing.GroupLayout.PREFERRED_SIZE, 935, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Status, javax.swing.GroupLayout.PREFERRED_SIZE, 935, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1439, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(Mensagens, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Editor, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
                 .addComponent(Status, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(436, Short.MAX_VALUE)
-                    .addComponent(Mensagens, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(45, 45, 45)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void NovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NovoButtonActionPerformed
+    // Pergunta o nome do novo documento
+    String nomeArquivo = JOptionPane.showInputDialog(this, "Digite o nome do novo documento:");
+
+    if (nomeArquivo != null && !nomeArquivo.trim().isEmpty()) {
+        // Pergunta onde o documento será salvo
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Selecione a pasta onde deseja salvar o documento");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File pasta = fileChooser.getSelectedFile();
+            File novoArquivo = new File(pasta, nomeArquivo + ".txt");
+
+            try {
+                // Cria o novo arquivo
+                if (novoArquivo.createNewFile()) {
+                    JOptionPane.showMessageDialog(this, "Documento criado com sucesso!");
+
+                    // Reseta as JTextAreas
+                    Editor.setText("");
+                    Mensagens.setText("");
+
+                    // Exibe o caminho do novo arquivo na JTextArea Status
+                    Status.setText("Novo documento criado: " + novoArquivo.getAbsolutePath());
+                } else {
+                    JOptionPane.showMessageDialog(this, "O arquivo já existe ou não pode ser criado.");
+                }
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao criar o documento: " + ex.getMessage());
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Nome do documento inválido.");
+    }
+    }//GEN-LAST:event_NovoButtonActionPerformed
+
+    private void NovoButtonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_NovoButtonKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NovoButtonKeyTyped
+
+    private void AbrirButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbrirButtonActionPerformed
+ JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
+    fileChooser.setFileFilter(filter);
+    int returnValue = fileChooser.showOpenDialog(null);
+
+    if (returnValue == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+            Editor.setText("");  // Limpa o conteúdo atual
+            String line;
+            while ((line = br.readLine()) != null) {
+                Editor.append(line + "\n");
+            }
+            // Exibe o caminho do arquivo na JTextArea Status
+            Status.setText("Arquivo aberto: " + selectedFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace(); // Trate a exceção de acordo com a sua necessidade
+        }
+    }
+    }//GEN-LAST:event_AbrirButtonActionPerformed
+
+    private void SalvarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalvarButtonActionPerformed
+    saveFile();       // TODO add your handling code here:        // TODO add your handling code here:
+    }//GEN-LAST:event_SalvarButtonActionPerformed
+
+    private void CopiarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CopiarButtonActionPerformed
+            if (Editor.getSelectedText() != null) {
+                Editor.copy();
+            }
+    }//GEN-LAST:event_CopiarButtonActionPerformed
+
+    private void ColarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ColarButtonActionPerformed
+    Editor.paste();        // TODO add your handling code here:
+    }//GEN-LAST:event_ColarButtonActionPerformed
+
+    private void RecotarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RecotarButtonActionPerformed
+     if (Editor.getSelectedText() != null) {
+                Editor.cut();
+            }        // TODO add your handling code here:
+    }//GEN-LAST:event_RecotarButtonActionPerformed
+
+    private void CompilarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CompilarButtonActionPerformed
+    Mensagens.setText("Compilação de programas ainda não foi implementada.");        // TODO add your handling code here:
+    }//GEN-LAST:event_CompilarButtonActionPerformed
+
+    private void EquipeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EquipeButtonActionPerformed
+    Mensagens.setText("Equipe: João Eduardo Cappellari Trevisol e Matheus Orth.");        // TODO add your handling code here:
+    }//GEN-LAST:event_EquipeButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -185,27 +461,53 @@ public class InterfaceCompilador extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
+ /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new InterfaceCompilador().setVisible(true);
             }
         });
     }
+    
+    private File currentFile;
+    
+private void saveFile() {
+    if (currentFile == null) {
+        // Se nenhum arquivo estiver aberto, pede para o usuário escolher onde salvar
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showSaveDialog(this);
+        
+        if (option == JFileChooser.APPROVE_OPTION) {
+            currentFile = fileChooser.getSelectedFile();
+        } else {
+            // Se o usuário cancelar a escolha, não faz nada
+            return;
+        }
+    }
+
+    // Agora, com currentFile definido, salva o arquivo
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
+        writer.write(Editor.getText());
+        JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+    } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Erro ao salvar o arquivo: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AbrirButton;
     private javax.swing.JButton ColarButton;
     private javax.swing.JButton CompilarButton;
     private javax.swing.JButton CopiarButton;
-    private java.awt.TextArea Editor;
+    private javax.swing.JTextArea Editor;
     private javax.swing.JButton EquipeButton;
-    private java.awt.TextArea Mensagens;
+    private javax.swing.JTextArea Mensagens;
     private javax.swing.JButton NovoButton;
     private javax.swing.JButton RecotarButton;
     private javax.swing.JButton SalvarButton;
     private java.awt.TextField Status;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
